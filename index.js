@@ -77,10 +77,7 @@ const BLOCOS = [
     ["Constitucional", "Administrativo"]
 ]
 
-let offset = Number(window.location.search.split('?')[1])
-if (!offset) {
-    offset = 0
-}
+const offset = getOffset()
 
 MATERIAS.innerHTML= geraListaMaterias();
 
@@ -124,7 +121,17 @@ function contaDiasUteis(){
 
 function avancar(v){
     const currentUrl = window.location.href;
-    const baseUrl = currentUrl.split('?')[0];
-    new_offset = offset + v
-    window.location.href = baseUrl + '?' + new_offset
+    const urlParts = currentUrl.split('?');
+    urlParts[urlParts.length-1] = Number(urlParts[urlParts.length-1])+v
+    window.location.href = urlParts.join('?')
+}
+
+function getOffset(){
+    urlParts = window.location.search.split('?')
+    let offset = Number(urlParts[urlParts.length-1])
+    if(!offset) {
+        offset = 0
+    }
+    console.log('offset:',offset)
+    return offset
 }
