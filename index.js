@@ -1,6 +1,6 @@
 const MATERIAS = document.querySelector('.materias');
 const HOJE = new Date();
-const DATA_INICIAL = new Date('2023-04-03T00:00:00');
+const DATA_INICIAL = new Date('2023-04-02T00:00:00');
 const LISTA_MATERIAS = [
     {
         "nome": "Penal",
@@ -68,14 +68,19 @@ const LISTA_MATERIAS = [
     }
 ]
 const BLOCOS = [
+    ["Direitos Humanos", "Crinça e Adolescente"],
+    ["Difusos e Coletivos", "Informativos"],
     ["Penal", "Tributário", "Empresarial"],
     ["Processo Penal", "Institucional", "Execução Penal"],
     ["Civil", "Consumidor"],
     ["Processo Civil", "Criminologia"],
-    ["Constitucional", "Administrativo"],
-    ["Direitos Humanos", "Crinça e Adolescente"],
-    ["Difusos e Coletivos", "Informativos"]
+    ["Constitucional", "Administrativo"]
 ]
+
+let offset = Number(window.location.search.split('?')[1])
+if (!offset) {
+    offset = 0
+}
 
 MATERIAS.innerHTML= geraListaMaterias();
 
@@ -100,16 +105,26 @@ function geraListaMaterias() {
 }
 
 function materiasDeHoje(){
+    const dias = contaDiasUteis()
+    index = dias % BLOCOS.length
+    paridade = Math.floor((dias / BLOCOS.length)%2)
+    return [BLOCOS[index], paridade];
+}
+
+function contaDiasUteis(){
     const umDiaEmMS = 1000 * 60 * 60 * 24;
-    let hoje = HOJE.getDay() === 0 ? new Date(HOJE.getTime() - umDiaEmMS) : HOJE
-    const dias = Math.floor((hoje.getTime() - DATA_INICIAL.getTime())/umDiaEmMS)
+    const dias = Math.floor((HOJE.getTime() - DATA_INICIAL.getTime())/umDiaEmMS)
     console.log("dias:",dias)
-    const semanas = Math.floor(dias / 7);
+    const semanas = Math.floor(dias / 7)
     console.log("semanas:",semanas)
-    let index = (dias % 7) - (semanas % 7);
-    if (index < 0 ) {
-        index = BLOCOS.length + index
-    }
-    console.log("index:",index)
-    return [BLOCOS[index], semanas%2];
+    const diasUteis = dias - semanas
+    console.log("dias úteis:",diasUteis)
+    return diasUteis + offset
+}
+
+function avancar(v){
+    const currentUrl = window.location.href;
+    const baseUrl = currentUrl.split('?')[0];
+    new_offset = offset + v
+    window.location.href = baseUrl + '?' + new_offset
 }
